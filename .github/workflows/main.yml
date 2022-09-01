@@ -1,0 +1,42 @@
+name: Changelog Consolidator
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Version Closing
+      with:
+        token: ${{ secrets.PRIVATE_ACCESS_TOKEN }}
+      run: |
+        if [[ github.event.head_commit.message != 'Inserting the information of the changes in the changelog file' ]] ; then
+          version=$(date +"%Y.%m.%d.%H%M")
+          colons=":"
+          echo -e "## v$version\n" | tee -a CHANGELOG-AUX.md
+          if [ `find unreleased/additions/ -type f -name "*.txt" | wc -l` -ge 1 ] ; then cat unreleased/additions/* >> unreleased/additions/added.txt; fi
+          if [ `find unreleased/additions/ -type f -name "*.txt" | wc -l` -ge 1 ] ; then echo -e "### Added\n" | tee -a CHANGELOG-AUX.md; fi
+          if [ `find unreleased/additions/ -type f -name "*.txt" | wc -l` -ge 1 ] ; then cat unreleased/additions/added.txt >> CHANGELOG-AUX.md; fi
+          if [ `find unreleased/additions/ -type f -name "*.txt" | wc -l` -ge 1 ] ; then rm unreleased/additions/*.txt; fi
+          if [ `find unreleased/improvements/ -type f -name "*.txt" | wc -l` -ge 1 ] ; then cat unreleased/improvements/* >> unreleased/improvements/improvements.txt; fi
+          if [ `find unreleased/improvements/ -type f -name "*.txt" | wc -l` -ge 1 ] ; then echo -e "\n### Improvements\n" | tee -a CHANGELOG-AUX.md; fi
+          if [ `find unreleased/improvements/ -type f -name "*.txt" | wc -l` -ge 1 ] ; then cat unreleased/improvements/improvements.txt >> CHANGELOG-AUX.md; fi
+          if [ `find unreleased/improvements/ -type f -name "*.txt" | wc -l` -ge 1 ] ; then rm unreleased/improvements/*.txt; fi
+          if [ `find unreleased/corrections/ -type f -name "*.txt" | wc -l` -ge 1 ] ; then cat unreleased/corrections/* >> unreleased/corrections/corrections.txt; fi
+          if [ `find unreleased/corrections/ -type f -name "*.txt" | wc -l` -ge 1 ] ; then echo -e "\n### Fixed\n" | tee -a CHANGELOG-AUX.md; fi
+          if [ `find unreleased/corrections/ -type f -name "*.txt" | wc -l` -ge 1 ] ; then cat unreleased/corrections/corrections.txt >> CHANGELOG-AUX.md; fi
+          if [ `find unreleased/corrections/ -type f -name "*.txt" | wc -l` -ge 1 ] ; then echo -e "\n" | tee -a CHANGELOG-AUX.md; fi
+          if [ `find unreleased/corrections/ -type f -name "*.txt" | wc -l` -ge 1 ] ; then rm unreleased/corrections/*.txt; fi
+          cat CHANGELOG-AUX.md CHANGELOG.md >> CHANGELOG-FINAL.md
+          rm CHANGELOG-AUX.md CHANGELOG.md
+          mv CHANGELOG-FINAL.md CHANGELOG.md
+          git config --global user.name 'User Name'
+          git config --global user.email 'username@users.noreply.github.com'
+          git commit -am "Inserting the information of the changes in the changelog file"
+          git push
+          git tag -a "v$version" -m "v$version"
+          git push origin "v$version"
+        fi
