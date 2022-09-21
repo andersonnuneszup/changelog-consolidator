@@ -1,0 +1,4 @@
+name: changelog-consolidator-template
+description: Template destined to show the funcionality of the system
+types:
+  - app-template
