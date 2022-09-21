@@ -4,12 +4,16 @@ description: Project destined to automate the changelog creation.
 name: changelog-consolidator
 display-name: changelog-consolidator
 picture: stack.png
-category: backend # Ref: https://docs.stackspot.com/latest/docs/creators-guide/yaml/#category
-compatibility: # Put a list of technologies compatible with the stack
+category: backend
+compatibility: 
   - java
   - spring
 technologies: # Ref: https://docs.stackspot.com/latest/docs/creators-guide/yaml/#technologies 
   - docker 
+  - java
+  - python
+  - C#
+  - kotlin
 about: docs/about.md
 use-cases:
   - title: Use Case Title
