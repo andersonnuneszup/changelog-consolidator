@@ -4,7 +4,7 @@ description: Project destined to automate the changelog creation.
 name: changelog-consolidator
 display-name: changelog-consolidator
 picture: stack.png
-category: Full Stack
+category: Backend
 compatibility: 
   - Java
   - Python
